@@ -1,0 +1,30 @@
+services:
+  proxy:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+  app:
+    image: registry.example.com/intranet/app
+    user: root
+    privileged: true
+    environment:
+      DATABASE_URL: postgres://admin:Admin2026!@db:5432/intranet
+      DEBUG: "true"
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Admin2026!
+    restart: always
